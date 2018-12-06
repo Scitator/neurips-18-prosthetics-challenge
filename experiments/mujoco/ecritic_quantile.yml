@@ -1,0 +1,105 @@
+shared:
+  state_size: 376
+  action_size: 17
+  history_len: 4
+
+  n_step: 1
+  gamma: 0.99
+
+args:
+  logdir: experiments/logs/ecritic-qua  #  change me
+  algorithm: rl/algorithms/ecritic_quantile.py
+  environment: envs/mujoco.py
+  vis: 0
+  infer: 1  #  change me
+  train: 12  #  change me
+  action_noise_prob: 0.5
+  param_noise_prob: 0.2
+  max_action_noise: 0.2
+  max_param_noise: 0.1
+
+redis:
+  port: 12000
+  prefix: humanoid
+
+env:
+  env_name: humanoid
+  reward_scale: 1.0
+  frame_skip: 1
+
+actor:
+  actor: LamaActor
+  hiddens: [256, 256, 128]
+  layer_fn: Linear
+  bias: false
+  norm_fn: LayerNorm
+  activation_fn: ReLU
+  out_activation: Tanh
+
+critic:
+  critic: LamaCritic
+  hiddens: [256, 256]
+  layer_fn: Linear
+  bias: false
+  norm_fn: LayerNorm
+  activation_fn: ReLU
+  concat_at: 0
+  n_atoms: 101
+
+algorithm:
+  actor_tau: 0.01
+  critic_tau: 0.01
+  min_action: -1.0
+  max_action: 1.0
+
+  actor_optimizer_params:
+    optimizer: Adam
+    lr: 0.0003
+  critic_optimizer_params:
+    optimizer: Adam
+    lr: 0.0003
+
+  actor_grad_clip:
+    func: clip_grad_value_
+    clip_value: 1.0
+
+  actor_scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [2000000]  # batches
+    gamma: 1.0
+  critic_scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [2000000]  # batches
+    gamma: 1.0
+
+  critic_loss_params:
+    criterion: HuberLoss
+    clip_delta: 1.0
+
+trainer:
+  batch_size: 256              # transitions
+
+  n_workers: 2
+  replay_buffer_size: 1000000  # transitions
+
+  start_learning: 5000         # transitions
+  epoch_len: 200               # batches
+  target_update_period: 1      # batches
+  save_period: 50              # epochs
+  weights_sync_period: 1       # epochs
+
+sampler:
+  weights_sync_period: 1
+
+  buffer_size: 10000
+  param_noise_steps: 1000
+
+  action_noise_t: 1
+  action_clip: [-1, 1]
+
+random_process:
+  random_process: GaussianWhiteNoiseProcess
+  sigma: 0.2
+  size: 17
+
+seeds: [1, 10, 1000, 10000, 42000]

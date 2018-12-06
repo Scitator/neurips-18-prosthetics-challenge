@@ -1,0 +1,67 @@
+{
+  "shared": {
+    "state_size": 344,
+    "action_size": 19,
+    "history_len": 12,
+    "n_step": 1,
+    "gamma": 0.99
+  },
+  "args": {
+    "algorithm": "catalyst/rl/algorithms/ecritic_quantile.py"
+  },
+  "actor": {
+    "actor": "LamaActor",
+    "hiddens": [
+      512,
+      512,
+      256,
+      256
+    ],
+    "layer_fn": "Linear",
+    "bias": false,
+    "norm_fn": "LayerNorm",
+    "activation_fn": "ReLU",
+    "out_activation": "Tanh"
+  },
+  "critic": {
+    "critic": "Critic",
+    "hiddens": [
+      512,
+      512,
+      256
+    ],
+    "layer_fn": "Linear",
+    "bias": false,
+    "norm_fn": "LayerNorm",
+    "activation_fn": "ReLU",
+    "concat_at": 0,
+    "n_atoms": 256
+  },
+  "algorithm": {
+    "n_critics": 2,
+    "action_noise_std": 0.15,
+    "action_noise_clip": 0.5,
+    "min_action": -1.0,
+    "max_action": 1.0,
+    "actor_tau": 0.0025,
+    "critic_tau": 0.005,
+    "actor_optimizer_params": {
+      "optimizer": "Adam",
+      "lr": 0.001
+    },
+    "critic_optimizer_params": {
+      "optimizer": "Adam",
+      "lr": 0.001
+    },
+    "actor_grad_clip": {
+      "func": "clip_grad_value_",
+      "clip_value": 1.0
+    },
+    "actor_scheduler_params": {},
+    "critic_scheduler_params": {},
+    "critic_loss_params": {
+      "criterion": "HuberLoss",
+      "clip_delta": 1.0
+    }
+  }
+}

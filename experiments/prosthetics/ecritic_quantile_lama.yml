@@ -1,0 +1,114 @@
+shared:
+  state_size: 344
+  action_size: 19
+  history_len: 4
+
+  n_step: 1
+  gamma: 0.99
+
+args:
+  logdir: ./experiments/logs/l2r-ecritic-qua-lama  #  change me
+  algorithm: catalyst/rl/algorithms/ecritic_quantile.py
+  environment: envs/prosthetics_round2.py
+  vis: 0
+  infer: 1  #  change me
+  train: 12  #  change me
+  action_noise_prob: 0.7
+  param_noise_prob: 0.2
+  max_action_noise: 0.2
+  max_param_noise: 0.2
+
+redis:
+  port: 13131
+  prefix: l2r-ecritic-qua-lama
+
+env:
+  frame_skip: 1
+  reward_scale: 0.1
+  crossing_legs_penalty: 10.
+  bending_knees_bonus: 0.0
+  observe_time: true
+  max_episode_length: 1000
+  randomized_start: false
+  max_reward: 2.0
+  action_fn: tanh
+
+actor:
+  actor: LamaActor
+  hiddens: [512, 512, 256]
+  layer_fn: Linear
+  bias: false
+  norm_fn: LayerNorm
+  activation_fn: ReLU
+  out_activation: Tanh
+
+critic:
+  critic: Critic
+  hiddens: [512, 512, 256]
+  layer_fn: Linear
+  bias: false
+  norm_fn: LayerNorm
+  activation_fn: ReLU
+  concat_at: 0
+  n_atoms: 101
+
+algorithm:
+  n_critics: 2
+  action_noise_std: 0.15
+  action_noise_clip: 0.5
+  min_action: -1.0
+  max_action: 1.0
+
+  actor_tau: 0.0025
+  critic_tau: 0.005
+
+  actor_optimizer_params:
+    optimizer: Adam
+    lr: 0.001
+  critic_optimizer_params:
+    optimizer: Adam
+    lr: 0.001
+
+  actor_grad_clip:
+    func: clip_grad_value_
+    clip_value: 1.0
+
+  actor_scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [1500000, 3000000]  # batches
+    gamma: 0.5
+  critic_scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [1500000, 3000000]  # batches
+    gamma: 0.5
+
+  critic_loss_params:
+    criterion: HuberLoss
+    clip_delta: 1.0
+
+trainer:
+  batch_size: 256              # transitions
+  n_workers: 2
+  replay_buffer_size: 5000000  # transitions
+  start_learning: 15000        # transitions
+  epoch_len: 500               # batches
+  target_update_period: 1      # batches
+  online_update_period: 1      # batches
+  save_period: 50              # epochs
+  weights_sync_period: 1       # epochs
+
+random_process:
+  random_process: GaussianWhiteNoiseProcess
+  sigma: 0.2
+  size: 19
+
+sampler:
+  weights_sync_period: 1
+
+  buffer_size: 10000
+  param_noise_steps: 1000
+
+  action_noise_t: 1
+  action_clip: [-1, 1]
+
+seeds: [1, 10, 1000, 10000, 42000]
