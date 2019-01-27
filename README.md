@@ -2,9 +2,6 @@
 
 ![alt text](./poster.png)
 
-## Attention
-
-`git clone --recursive git@github.com:scitator/neurips-18-prosthetics-challenge.git`
 
 ## How2run
 
@@ -16,13 +13,12 @@
 
     ```bash
     conda create -n opensim-rl -c kidzik opensim python=3.6.1
-    activate opensim-rl
     source activate opensim-rl
     conda install -c conda-forge lapack git
     conda install pytorch torchvision -c pytorch
     pip install git+https://github.com/stanfordnmbl/osim-rl.git
     pip install git+https://github.com/pytorch/tnt.git@master
-    pip install pyaml tensorboardX jpeg4py albumentations    
+    pip install catalyst
     ```
 
 3. Mujoco example
@@ -32,16 +28,13 @@
     ```bash
     redis-server --port 12000
     export GPUS=""
-    CUDA_VISIBLE_DEVICES="$GPUS" PYTHONPATH=. \
-        python rl/offpolicy/scripts/run_trainer.py \
+    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
         --config=experiments/mujoco/ecritic_quantile.yml
     
-    CUDA_VISIBLE_DEVICES="" PYTHONPATH=. \
-        python rl/offpolicy/scripts/run_samplers.py \
+    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
         --config=experiments/mujoco/ecritic_quantile.yml
     
-    CUDA_VISIBLE_DEVICE="" tensorboard \
-       --logdir=./experiments/logs
+    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./experiments/logs
     ```
 
 4. L2R example – ensemble training
@@ -54,32 +47,27 @@
     2. FC
         ```bash
         export GPUS=""
-        CUDA_VISIBLE_DEVICES="$GPUS" PYTHONPATH=. \
-            python catalyst/rl/offpolicy/scripts/run_trainer.py \
+        CUDA_VISIBLE_DEVICES="$GPUS" PYTHONPATH=. catalyst-rl run-trainer \
             --config=experiments/prosthetics/ecritic_quantile_fc.yml
         
-        CUDA_VISIBLE_DEVICES="" PYTHONPATH=. \
-            python catalyst/rl/offpolicy/scripts/run_samplers.py \
+        CUDA_VISIBLE_DEVICES="" PYTHONPATH=. catalyst-rl run-samplers \
             --config=experiments/prosthetics/ecritic_quantile_fc.yml
         ```
 
     3. LAMA
         ```bash
         export GPUS=""
-        CUDA_VISIBLE_DEVICES="$GPUS" PYTHONPATH=. \
-            python catalyst/rl/offpolicy/scripts/run_trainer.py \
+        CUDA_VISIBLE_DEVICES="$GPUS" PYTHONPATH=. catalyst-rl run-trainer \
             --config=experiments/prosthetics/ecritic_quantile_lama.yml
         
-        CUDA_VISIBLE_DEVICES="" PYTHONPATH=. \
-            python catalyst/rl/offpolicy/scripts/run_samplers.py \
+    CUDA_VISIBLE_DEVICES="" PYTHONPATH=. catalyst-rl run-samplers \
             --config=experiments/prosthetics/ecritic_quantile_lama.yml
         ```
     
     4. Monitoring
         ```bash
 
-        CUDA_VISIBLE_DEVICE="" tensorboard \
-           --logdir=./experiments/logs
+        CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./experiments/logs
         ```
 
 5. L2R submit test

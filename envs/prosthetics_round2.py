@@ -5,6 +5,7 @@ from osim.env import ProstheticsEnv
 from gym.spaces import Box
 
 from catalyst.utils.misc import set_global_seeds
+from catalyst.contrib.registry import Registry
 from envs.prosthetics_preprocess import preprocess_obs_round2, \
     euler_angles_to_rotation_matrix, get_simbody_state
 
@@ -12,6 +13,7 @@ from envs.prosthetics_preprocess import preprocess_obs_round2, \
 SEED_RANGE = 2 ** 32 - 2
 
 
+@Registry.environment
 class ProstheticsEnvWrap:
     def __init__(
             self,

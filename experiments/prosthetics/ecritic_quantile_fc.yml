@@ -1,6 +1,6 @@
 shared:
   state_size: 344
-  action_size: 19
+  action_size: &action_size 19
   history_len: 1
 
   n_step: 1
@@ -8,8 +8,9 @@ shared:
 
 args:
   logdir: ./experiments/logs/l2r-ecritic-qua-fc  #  change me
-  algorithm: catalyst/rl/algorithms/ecritic_quantile.py
-  environment: envs/prosthetics_round2.py
+  expdir: "./envs/"
+  algorithm: TD3
+  environment: ProstheticsEnvWrap
   vis: 0
   infer: 1  #  change me
   train: 12  #  change me
@@ -34,33 +35,36 @@ env:
   action_fn: tanh
 
 actor:
-  actor: Actor
+  agent: Actor
   hiddens: [512, 512, 256]
   layer_fn: Linear
   bias: false
   norm_fn: LayerNorm
   activation_fn: ReLU
   out_activation: Tanh
+  memory_type: null
 
 critic:
-  critic: Critic
-  hiddens: [512, 512, 256]
+  agent: Critic
+  observation_hiddens: [256]
+  action_hiddens: [64]
+  head_hiddens: [512, 256, 101]
   layer_fn: Linear
   bias: false
   norm_fn: LayerNorm
   activation_fn: ReLU
-  concat_at: 0
-  n_atoms: 101
+  memory_type: null
+
 
 algorithm:
   n_critics: 2
+  actor_tau: 0.01
+  critic_tau: 0.01
+  min_action: &min_action -1.0
+  max_action: &max_action 1.0
+
   action_noise_std: 0.15
   action_noise_clip: 0.5
-  min_action: -1.0
-  max_action: 1.0
-
-  actor_tau: 0.0025
-  critic_tau: 0.005
 
   actor_optimizer_params:
     optimizer: Adam
@@ -69,7 +73,7 @@ algorithm:
     optimizer: Adam
     lr: 0.001
 
-  actor_grad_clip:
+  actor_grad_clip_params:
     func: clip_grad_value_
     clip_value: 1.0
 
@@ -97,11 +101,6 @@ trainer:
   save_period: 50              # epochs
   weights_sync_period: 1       # epochs
 
-random_process:
-  random_process: GaussianWhiteNoiseProcess
-  sigma: 0.2
-  size: 19
-
 sampler:
   weights_sync_period: 1
 
@@ -109,6 +108,11 @@ sampler:
   param_noise_steps: 1000
 
   action_noise_t: 1
-  action_clip: [-1, 1]
+  action_clip: [*min_action, *max_action]
+
+random_process:
+  random_process: GaussianWhiteNoiseProcess
+  sigma: 0.2
+  size: *action_size
 
 seeds: [1, 10, 1000, 10000, 42000]
