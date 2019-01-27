@@ -16,8 +16,9 @@
     source activate opensim-rl
     conda install -c conda-forge lapack git
     conda install pytorch torchvision -c pytorch
-    pip install git+https://github.com/stanfordnmbl/osim-rl.git
     pip install git+https://github.com/pytorch/tnt.git@master
+    pip install git+https://github.com/stanfordnmbl/osim-rl.git
+    pip isntall tensorflow # for tensorboard visualization
     pip install catalyst
     ```
 
