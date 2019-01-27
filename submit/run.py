@@ -4,7 +4,7 @@ import os
 import copy
 import torch
 import numpy as np
-from catalyst.utils.args import parse_args_uargs
+from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seeds, import_module, create_if_need
 from envs.prosthetics_preprocess import \
     preprocess_obs_round2 as preprocess_state
