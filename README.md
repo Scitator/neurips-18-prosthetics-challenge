@@ -93,3 +93,15 @@
 [Medium post](https://medium.com/@dbrainio/neurips-to-make-the-most-of-it-and-get-to-the-top-cb103d5cdf00?fbclid=IwAR3uNq10PjiS65KjTeE0DElOkg1lTdiMzgkPOc-RSFnnqOK4gB_ftaFOWSg)
 
 [Video](https://www.youtube.com/watch?v=uGL6jcSmGoA&feature=youtu.be)
+
+
+## Citation
+Please cite the following paper if you feel this repository useful.
+```
+@article{catalyst_rl,
+  title={Catalyst.RL: A Distributed Framework for Reproducible RL Research},
+  author = {Kolesnikov, Sergey and Hrinchuk, Oleksii},
+  journal={arXiv preprint arXiv:1903.00027},
+  year={2019}
+}
+```
